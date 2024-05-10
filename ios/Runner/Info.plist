@@ -45,5 +45,26 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	 <key>NSCameraUsageDescription</key>
+    <string>We need access to your camera for profile pictures.</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>We need access to your photo library to select profile pictures.</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>We need your location to show nearby events.</string>
+
+    <!-- Launch settings -->
+    <key>UILaunchStoryboardName</key>
+    <string>LaunchScreen</string>
+
+    <!-- External integrations (example) -->
+    <key>FirebaseAppDelegateProxyEnabled</key>
+    <false/>
+
+    <!-- Background mode -->
+    <key>UIBackgroundModes</key>
+    <array>
+        <string>fetch</string>
+    </array>
+
 </dict>
 </plist>

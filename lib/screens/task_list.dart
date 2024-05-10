@@ -1,4 +1,3 @@
-import 'package:animate_do/animate_do.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,12 +6,17 @@ import 'package:task_tracker_assignment/constant/colors.dart';
 import 'package:task_tracker_assignment/constant/task_controller.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:task_tracker_assignment/model/task_model.dart';
+import 'package:animate_do/animate_do.dart';
+import 'package:task_tracker_assignment/screens/editTask.dart';
+import 'package:task_tracker_assignment/screens/home_screen.dart';
 import 'package:task_tracker_assignment/widgets/custom_toast.dart';
 
+// ignore: use_key_in_widget_constructors
 class TaskList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TaskController taskController = Get.find<TaskController>();
+    final DateController dateController = Get.find<DateController>();
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return Expanded(
@@ -21,14 +25,27 @@ class TaskList extends StatelessWidget {
           children: [
             Obx(
               () {
-                final List<Task> sortedTasks =
-                    [...taskController.tasks].toList()
-                      ..sort((a, b) {
-                        final DateTime aDate = a.selectedDate;
-                        final DateTime bDate = b.selectedDate;
-                        return aDate.compareTo(bDate);
-                      });
-                if (sortedTasks.isEmpty) {
+                final selectedDateIndex = dateController.selectedIndex.value;
+                final List<Task> allTasks = taskController.tasks.toList();
+
+                List<Task> filteredTasks;
+                if (selectedDateIndex == 0) {
+                  filteredTasks = allTasks;
+                } else {
+                  final DateTime selectedDate =
+                      _getNext7Days()[selectedDateIndex];
+                  filteredTasks = allTasks
+                      .where(
+                        (task) => DateUtils.isSameDay(
+                            task.selectedDate, selectedDate),
+                      )
+                      .toList();
+                }
+
+                filteredTasks
+                    .sort((a, b) => a.selectedDate.compareTo(b.selectedDate));
+
+                if (filteredTasks.isEmpty) {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -44,15 +61,15 @@ class TaskList extends StatelessWidget {
                           style: GoogleFonts.montserrat(
                             color: completedTask,
                             fontWeight: FontWeight.bold,
-                            fontSize: 30,
+                            fontSize: 20,
                           ),
                         ),
-                      )
+                      ),
                     ],
                   );
                 } else {
                   return Column(
-                    children: sortedTasks.map(
+                    children: filteredTasks.map(
                       (task) {
                         return Dismissible(
                           key: Key(task.hashCode.toString()),
@@ -87,7 +104,6 @@ class TaskList extends StatelessWidget {
                               context: context,
                               builder: (BuildContext context) {
                                 return AlertDialog(
-                                  backgroundColor: Colors.white,
                                   title: Text(
                                     "Confirm",
                                     style: GoogleFonts.montserrat(
@@ -136,30 +152,27 @@ class TaskList extends StatelessWidget {
                           },
                           onDismissed: (direction) {
                             taskController.deleteTask(task);
-                            customToast(
-                              'Task Deleted',
-                              context: context,
-                              Colors.red.shade500,
-                            );
+                            customToast('Task Deleted', Colors.red.shade500,
+                                context: context);
                           },
                           child: Padding(
                             padding: const EdgeInsets.symmetric(vertical: 5.0),
                             child: FadeInUp(
                               duration: const Duration(milliseconds: 500),
                               child: Card(
-                                elevation: 5,
                                 color: Colors.white,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20),
-                                  side: const BorderSide(
+                                  side: BorderSide(
                                     width: 0.99,
-                                    color: Colors.black,
+                                    color: Colors.grey.shade200,
                                   ),
                                 ),
                                 child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: height * 0.009,
-                                      horizontal: width * 0.009),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 7,
+                                    horizontal: 4,
+                                  ),
                                   child: ListTile(
                                     title: Row(
                                       children: [
@@ -174,11 +187,8 @@ class TaskList extends StatelessWidget {
                                         const Spacer(),
                                         CupertinoSwitch(
                                           value: task.completed,
-                                          activeColor: taskcard,
-                                          trackColor: Colors.black,
+                                          activeColor: addTaskColor,
                                           onChanged: (value) {
-                                            print(
-                                                'Switch state changed: $value');
                                             task.completed = value;
                                             taskController.updateTask(task);
                                           },
@@ -200,19 +210,37 @@ class TaskList extends StatelessWidget {
                                         Row(
                                           children: [
                                             const Icon(Icons.date_range),
-                                            const SizedBox(width: 5),
+                                            SizedBox(width: width * 0.01),
                                             Text(
                                               DateFormat('MMMM d, yyyy')
                                                   .format(task.selectedDate),
                                               style:
                                                   const TextStyle(fontSize: 14),
                                             ),
-                                            const SizedBox(width: 20),
+                                            SizedBox(width: width * 0.01),
                                             const Icon(Icons.access_time),
-                                            const SizedBox(width: 5),
+                                            SizedBox(width: width * 0.01),
                                             Text(
                                               '${task.from} - ${task.to}',
-                                              // TextStyle for displaying time
+                                              style:
+                                                  const TextStyle(fontSize: 14),
+                                            ),
+                                            const Spacer(),
+                                            IconButton(
+                                              icon: const Icon(
+                                                Icons.edit,
+                                                color: mainColor,
+                                              ),
+                                              onPressed: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        EditTaskScreen(
+                                                            task: task),
+                                                  ),
+                                                );
+                                              },
                                             ),
                                           ],
                                         ),
@@ -234,5 +262,15 @@ class TaskList extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  List<DateTime> _getNext7Days() {
+    List<DateTime> dates = [];
+    DateTime today = DateTime.now();
+    dates.add(DateTime(0));
+    for (int i = 0; i < 7; i++) {
+      dates.add(today.add(Duration(days: i)));
+    }
+    return dates;
   }
 }

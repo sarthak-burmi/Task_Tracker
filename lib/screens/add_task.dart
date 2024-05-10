@@ -1,6 +1,5 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_styled_toast/flutter_styled_toast.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -45,6 +44,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(
@@ -53,7 +53,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
           ),
           child: Column(
             children: [
-              SizedBox(height: height * 0.05),
+              SizedBox(height: height * 0.04),
               Row(
                 children: [
                   Text(
@@ -82,13 +82,12 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
               FadeInUp(
                 duration: const Duration(milliseconds: 300),
                 child: Image.asset(
-                  "assets/images/add-notes-bro.png",
+                  "assets/images/add_notes-bro.png",
                   height: height * 0.26,
                 ),
               ),
               SizedBox(height: height * 0.02),
               addtaskform(height, context, width),
-              SizedBox(height: height * 0.09),
             ],
           ),
         ),
@@ -115,7 +114,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
-                  borderSide: const BorderSide(color: taskcard, width: 2),
+                  borderSide: const BorderSide(color: addTaskColor, width: 2),
                 ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
@@ -145,7 +144,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
-                  borderSide: const BorderSide(color: taskcard, width: 2),
+                  borderSide: const BorderSide(color: addTaskColor, width: 2),
                 ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),

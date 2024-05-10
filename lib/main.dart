@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
+
 import 'package:task_tracker_assignment/constant/task_controller.dart';
 import 'package:task_tracker_assignment/model/task_adapter.dart';
 import 'package:task_tracker_assignment/model/task_model.dart';
-
 import 'package:task_tracker_assignment/screens/home_screen.dart';
 
 void main() async {

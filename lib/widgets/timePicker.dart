@@ -1,13 +1,12 @@
+// ignore_for_file: file_names
 import 'package:flutter/material.dart';
 
 class CustomTimePicker extends StatefulWidget {
   final void Function(TimeOfDay)? onTimeSelected;
   final String label;
-
-  const CustomTimePicker({Key? key, this.onTimeSelected, required this.label})
-      : super(key: key);
-
+  const CustomTimePicker({super.key, this.onTimeSelected, required this.label});
   @override
+  // ignore: library_private_types_in_public_api
   _CustomTimePickerState createState() => _CustomTimePickerState();
 }
 
@@ -22,7 +21,7 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
+    //double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return InkWell(
       onTap: () async {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:task_tracker_assignment/constant/colors.dart';
 import 'package:task_tracker_assignment/screens/task_list.dart';
+import 'package:task_tracker_assignment/widgets/dateSelector.dart';
 import 'package:task_tracker_assignment/widgets/greeting_text.dart';
 import 'package:task_tracker_assignment/constant/task_controller.dart';
 import 'package:get/get.dart';
@@ -10,6 +11,7 @@ import 'package:task_tracker_assignment/screens/add_task.dart';
 
 class TaskScreen extends StatelessWidget {
   final TaskController taskController = Get.find<TaskController>();
+  final DateController dateController = Get.put(DateController());
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +26,7 @@ class TaskScreen extends StatelessWidget {
       resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
+          OutlinedButton(onPressed: () {}, child: Text("")),
           Padding(
             padding: EdgeInsets.symmetric(
                 vertical: height * 0.02, horizontal: width * 0.040),
@@ -69,17 +72,26 @@ class TaskScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: height * 0.02),
+                SizedBox(height: height * 0.025),
                 TaskDetails(
-                    height: height,
-                    width: width,
-                    taskController: taskController),
+                  height: height,
+                  width: width,
+                  taskController: taskController,
+                ),
+                SizedBox(height: height * 0.0040),
+                Obx(
+                  () => DateSelector(
+                    selectedIndex: dateController.selectedIndex.value,
+                    onDateSelected: (index) {
+                      dateController.updateSelectedIndex(index);
+                    },
+                  ),
+                ),
                 SizedBox(height: height * 0.01),
                 TaskList(),
               ],
             ),
           ),
-          // addTaskButton(context),
         ],
       ),
     );
@@ -101,7 +113,7 @@ class TaskDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-    //double height = MediaQuery.of(context).size.height;
+
     return Row(
       children: [
         Expanded(
@@ -191,7 +203,7 @@ class TaskDetails extends StatelessWidget {
             },
             child: Container(
               decoration: BoxDecoration(
-                color: taskcard,
+                color: addTaskColor,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Padding(
@@ -227,5 +239,13 @@ class TaskDetails extends StatelessWidget {
         )
       ],
     );
+  }
+}
+
+class DateController extends GetxController {
+  RxInt selectedIndex = 0.obs;
+
+  void updateSelectedIndex(int index) {
+    selectedIndex.value = index;
   }
 }
