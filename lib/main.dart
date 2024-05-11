@@ -6,6 +6,8 @@ import 'package:path_provider/path_provider.dart' as path_provider;
 import 'package:task_tracker_assignment/constant/task_controller.dart';
 import 'package:task_tracker_assignment/model/task_adapter.dart';
 import 'package:task_tracker_assignment/model/task_model.dart';
+import 'package:task_tracker_assignment/screens/Authentication/login_screen.dart';
+import 'package:task_tracker_assignment/screens/Authentication/sign_up.dart';
 import 'package:task_tracker_assignment/screens/home_screen.dart';
 
 void main() async {
@@ -29,7 +31,12 @@ class TaskTracker extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
       ),
-      home: TaskScreen(),
+      initialRoute: '/login',
+      routes: {
+        '/home': (context) => TaskScreen(),
+        '/login': (context) => const LoginScreen(),
+        '/signup': (context) => const SignUpScreen()
+      },
     );
   }
 }
